@@ -27,9 +27,11 @@ def main():
         lib_appargs.set_arg_bool('NO_CUDA', args.no_cuda)
 
         print('Running DeepFaceLive.')
-        from apps.DeepFaceLive.DeepFaceLiveApp import DeepFaceLiveApp
+        # from apps.DeepFaceLive.DeepFaceLiveApp import DeepFaceLiveApp
+        # DeepFaceLiveApp(userdata_path=userdata_path).run()
+        from apps.DeepFaceLive.console import DeepFaceLiveApp
         DeepFaceLiveApp(userdata_path=userdata_path).run()
-
+        
     p = run_subparsers.add_parser('DeepFaceLive')
     p.add_argument('--userdata-dir', default=None, action=fixPathAction, help="Workspace directory.")
     p.add_argument('--no-cuda', action="store_true", default=False, help="Disable CUDA.")

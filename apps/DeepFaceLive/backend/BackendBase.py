@@ -132,8 +132,8 @@ class BackendConnectionData:
 
     def get_face_swap_info_list(self) -> List[BackendFaceSwapInfo]: return self._face_swap_info_list
     def add_face_swap_info(self, fsi : BackendFaceSwapInfo):
-        if not isinstance(fsi, BackendFaceSwapInfo):
-            raise ValueError(f'fsi must be an instance of BackendFaceSwapInfo')
+        # if not isinstance(fsi, BackendFaceSwapInfo):
+        #     raise ValueError(f'fsi must be an instance of BackendFaceSwapInfo')
         self._face_swap_info_list.append(fsi)
 
 

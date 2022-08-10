@@ -1,7 +1,9 @@
-*
-!*.py
+#*
+# !*.py
 !*.md
 !*.txt
 !*.jpg
 !*.png
 !requirements*
+*/__pycache__
+*/*.jpg
