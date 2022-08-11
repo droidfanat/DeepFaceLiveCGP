@@ -211,7 +211,7 @@ class FaceMarker():
     def __init__(self) -> None:
         device = onnx_models.FaceMesh.get_available_devices()
         
-        self.google_facemesh = onnx_models.FaceMesh(device[1])
+        self.google_facemesh = onnx_models.FaceMesh(device[0])
         self.temporal_smoothing = 1
         self.marker_coverage = 1.4
 
