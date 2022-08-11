@@ -32,4 +32,5 @@ docker build . -t deepfacelive
 xhost +
 #docker run --ipc host --gpus all -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v $DATA_FOLDER:/data/ $CAM0 $CAM1 $CAM2 $CAM3  --rm -it deepfacelive
 #docker run --ipc host -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v $DATA_FOLDER:/data/ --device /dev/video0  --device /dev/dri:/dev/dri --rm -it deepfacelive
-docker run --ipc host -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v /home/devops/project/DeepFaceLive:/app/DeepFaceLive -v $DATA_FOLDER:/data/ --device /dev/video0  --device /dev/dri:/dev/dri --rm -it deepfacelive  bash
+docker run --ipc host -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v /home/devops/project/DeepFaceLive:/app/DeepFaceLive -v $DATA_FOLDER:/content --device /dev/video0  --device /dev/dri:/dev/dri --rm -it deepfacelive  bash
+

@@ -475,7 +475,7 @@ class FaceMerger():
         self.interpolation = 'bilinear'
         self.color_compression = 1.0
         self.face_opacity = 1.0
-        self.device = "CPU"
+        self.device = "GPU"
 
     _cpu_interp = {'bilinear' : ImageProcessor.Interpolation.LINEAR,
                    'bicubic'  : ImageProcessor.Interpolation.CUBIC,
@@ -618,7 +618,8 @@ class FaceMerger():
                         # merged_image_name = f'{frame_image_name}_merged'
                         # bcd.set_merged_image_name(merged_image_name)
                         # bcd.set_image(merged_image_name, merged_frame)
-                        return merged_frame
+                        img = ImageProcessor(merged_frame).to_uint8().get_image('HWC')
+                        return img
 
 
 
@@ -666,7 +667,6 @@ class DeepFaceLiveApp():
 
             img = self.inputStream.on_tick(frame)
             swap_info_list = self.faceDetector.on_tick(img)
-            print(swap_info_list)
             self.faceMarker.on_tick(img, swap_info_list)
             face_align_lmrks_mask_img , face_align_img = self.faceAligner.on_tick(img, swap_info_list)
             (face_align_mask_img, face_swap_img, face_swap_mask_img) = self.faceSwapper.on_tick(face_align_img, swap_info_list)
@@ -679,7 +679,7 @@ class DeepFaceLiveApp():
                 s_output_stream.send(send_data)
 
 
-            # if face_swap_img is not None:           
+            # if res_img is not None:           
             #     cv2.imshow('client', res_img)
             #     if cv2.waitKey(1) & 0xFF == ord('q'):
             #         break
