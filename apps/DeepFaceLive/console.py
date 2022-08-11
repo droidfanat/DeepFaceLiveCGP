@@ -101,6 +101,45 @@ class Camera():
 
 
 
+class InputStream():
+    def __init__(self) -> None:
+            self.vcap = None
+            driver = _DriverType.DSHOW
+
+            cv_api = {_DriverType.COMPATIBLE: cv2.CAP_ANY,
+                      _DriverType.DSHOW: cv2.CAP_DSHOW,
+                      _DriverType.MSMF: cv2.CAP_MSMF,
+                      _DriverType.GSTREAMER: cv2.CAP_GSTREAMER,
+                      }[driver]
+
+            # vcap = cv2.VideoCapture(0)
+            
+            # if vcap.isOpened():
+            #     self.vcap = vcap
+            #     w, h = _ResolutionType_wh[0]
+            #     vcap.set(cv2.CAP_PROP_FRAME_WIDTH, w)
+            #     vcap.set(cv2.CAP_PROP_FRAME_HEIGHT, h)
+
+
+    def on_tick(self, img):
+
+        if img is not None:
+            ip = ImageProcessor(img)
+            ip.ch(3).to_uint8()
+            w, h = _ResolutionType_wh[0]
+            ip.fit_in(TW=w)
+            img = ip.get_image('HWC')
+        
+        return img
+
+
+
+
+
+
+
+
+
 class DetectorType(IntEnum):
     CENTER_FACE = 0
     S3FD = 1
@@ -596,7 +635,8 @@ from socket import *
 
 class DeepFaceLiveApp():
     def __init__(self,userdata_path) -> None:
-         self.camera = Camera()
+         #self.camera = Camera()
+         self.inputStream = InputStream()
          self.faceDetector = FacDetetor()
          self.faceMarker = FaceMarker()
          self.faceAligner = FaceAligner()
@@ -622,23 +662,19 @@ class DeepFaceLiveApp():
             receive_data = np.frombuffer(data, dtype='uint8')
             frame = cv2.imdecode(receive_data, cv2.IMREAD_COLOR)
 
-            try:
-                frame = cv2.resize(frame, (640, 480))
-            except:
-                print("e")
-                continue
+ 
 
-            #img = self.camera.on_tick()
-            swap_info_list = self.faceDetector.on_tick(frame)
-            self.faceMarker.on_tick(frame, swap_info_list)
-            face_align_lmrks_mask_img , face_align_img = self.faceAligner.on_tick(frame, swap_info_list)
+            img = self.inputStream.on_tick(frame)
+            swap_info_list = self.faceDetector.on_tick(img)
+            self.faceMarker.on_tick(img, swap_info_list)
+            face_align_lmrks_mask_img , face_align_img = self.faceAligner.on_tick(img, swap_info_list)
             (face_align_mask_img, face_swap_img, face_swap_mask_img) = self.faceSwapper.on_tick(face_align_img, swap_info_list)
-            frameAjuster_img = self.frameAjuster.on_tick(frame)
+            frameAjuster_img = self.frameAjuster.on_tick(img)
 
             res_img = self.faceMerger.on_tick(frameAjuster_img, swap_info_list, face_align_img, face_align_lmrks_mask_img, face_align_mask_img, face_swap_img, face_swap_mask_img)
 
-            if frame is not None: 
-                _, send_data = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 50])
+            if img is not None: 
+                _, send_data = cv2.imencode('.jpg', img, [cv2.IMWRITE_JPEG_QUALITY, 50])
                 s_output_stream.send(send_data)
 
 
