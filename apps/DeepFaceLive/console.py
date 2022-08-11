@@ -426,16 +426,16 @@ class FaceMerger():
     def __init__(self):
         self.face_x_offset = 0.0
         self.face_y_offset = 0.0
-        self.face_scale = 1.0
+        self.face_scale = 1
         self.face_mask_source = True
         self.face_mask_celeb = True
         self.face_mask_lmrks = False
-        self.face_mask_erode = 5.0
-        self.face_mask_blur = 5.0
+        self.face_mask_erode = 5
+        self.face_mask_blur = 5
         self.color_transfer = 'rct'
         self.interpolation = 'bilinear'
-        self.color_compression = 10.0
-        self.face_opacity = 1.0
+        self.color_compression = 1
+        self.face_opacity = 1
         self.device = "GPU"
 
     _cpu_interp = {'bilinear' : ImageProcessor.Interpolation.LINEAR,
