@@ -304,7 +304,7 @@ from xlib.python import all_is_not_None
 
 class FaceSwapper():
     def __init__(self):
-        self.model = DFLive.get_available_models_info(Path("/data/dfm_models/"))[2]
+        self.model = DFLive.get_available_models_info(Path("/content/dfm_models/"))[2]
         self.device = DFLive.get_available_devices()[0] 
         self.dfm_model_initializer = DFLive.DFMModel_from_info(self.model, self.device)
         self.dfm_model = None
