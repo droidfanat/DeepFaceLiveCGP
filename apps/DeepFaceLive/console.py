@@ -666,6 +666,7 @@ class DeepFaceLiveApp():
 
             img = self.inputStream.on_tick(frame)
             swap_info_list = self.faceDetector.on_tick(img)
+            print(swap_info_list)
             self.faceMarker.on_tick(img, swap_info_list)
             face_align_lmrks_mask_img , face_align_img = self.faceAligner.on_tick(img, swap_info_list)
             (face_align_mask_img, face_swap_img, face_swap_mask_img) = self.faceSwapper.on_tick(face_align_img, swap_info_list)
@@ -673,8 +674,8 @@ class DeepFaceLiveApp():
 
             res_img = self.faceMerger.on_tick(frameAjuster_img, swap_info_list, face_align_img, face_align_lmrks_mask_img, face_align_mask_img, face_swap_img, face_swap_mask_img)
 
-            if res_img is not None: 
-                _, send_data = cv2.imencode('.jpg', res_img, [cv2.IMWRITE_JPEG_QUALITY, 50])
+            if face_swap_img is not None: 
+                _, send_data = cv2.imencode('.jpg', face_swap_img, [cv2.IMWRITE_JPEG_QUALITY, 50])
                 s_output_stream.send(send_data)
 
 
