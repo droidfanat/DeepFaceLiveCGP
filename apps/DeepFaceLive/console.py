@@ -210,7 +210,7 @@ class FacDetetor():
 class FaceMarker():
     def __init__(self) -> None:
         device = onnx_models.FaceMesh.get_available_devices()
-        self.google_facemesh = onnx_models.FaceMesh(device[0])
+        self.google_facemesh = onnx_models.FaceMesh(device[1])
         self.temporal_smoothing = 1
         self.marker_coverage = 1.4
 
@@ -305,7 +305,7 @@ from xlib.python import all_is_not_None
 class FaceSwapper():
     def __init__(self):
         self.model = DFLive.get_available_models_info(Path("/content/dfm_models/"))[2]
-        self.device = DFLive.get_available_devices()[0] 
+        self.device = DFLive.get_available_devices()[1] 
         self.dfm_model_initializer = DFLive.DFMModel_from_info(self.model, self.device)
         self.dfm_model = None
         self.swap_all_faces = False
@@ -434,7 +434,7 @@ class FaceMerger():
         self.interpolation = 'bilinear'
         self.color_compression = 10.0
         self.face_opacity = 1.0
-        self.device = "CPU"
+        self.device = "GPU"
 
     _cpu_interp = {'bilinear' : ImageProcessor.Interpolation.LINEAR,
                    'bicubic'  : ImageProcessor.Interpolation.CUBIC,
