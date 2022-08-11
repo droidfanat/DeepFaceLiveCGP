@@ -622,7 +622,12 @@ class DeepFaceLiveApp():
             receive_data = np.frombuffer(data, dtype='uint8')
             frame = cv2.imdecode(receive_data, cv2.IMREAD_COLOR)
 
-
+            try:
+                frame = cv2.resize(frame, (640, 480))
+            except:
+                print("e")
+                continue
+            
             #img = self.camera.on_tick()
             swap_info_list = self.faceDetector.on_tick(frame)
             self.faceMarker.on_tick(frame, swap_info_list)
