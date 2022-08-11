@@ -500,8 +500,8 @@ class FaceMerger():
     _n_mask_multiply_op_text = [ f"float X = {'*'.join([f'(((float)I{i}) / 255.0)' for i in range(n)])}; O = (X <= 0.5 ? 0 : 1);" for n in range(5) ]
 
     def _merge_on_gpu(self, frame_image, face_resolution, face_align_img, face_align_mask_img, face_align_lmrks_mask_img, face_swap_img, face_swap_mask_img, aligned_to_source_uni_mat, frame_width, frame_height, do_color_compression ):
-        self = self.get_self()
-        interpolation = self._gpu_interp[self.interpolation]
+
+        interpolation = FaceMerger._gpu_interp[self.interpolation]
 
         masks = []
         if self.face_mask_source:
