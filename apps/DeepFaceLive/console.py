@@ -469,7 +469,7 @@ class FaceMerger():
         self.face_mask_source = True
         self.face_mask_celeb = True
         self.face_mask_lmrks = False
-        self.face_mask_erode = 5.0
+        self.face_mask_erode = 5
         self.face_mask_blur = 25.0
         self.color_transfer = 'rct'
         self.interpolation = 'bilinear'
