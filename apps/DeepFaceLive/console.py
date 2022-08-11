@@ -475,7 +475,7 @@ class FaceMerger():
         self.interpolation = 'bilinear'
         self.color_compression = 1.0
         self.face_opacity = 1.0
-        self.device = "GPU"
+        self.device = "CPU"
 
     _cpu_interp = {'bilinear' : ImageProcessor.Interpolation.LINEAR,
                    'bicubic'  : ImageProcessor.Interpolation.CUBIC,
