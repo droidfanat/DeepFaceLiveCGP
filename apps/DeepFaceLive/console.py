@@ -589,7 +589,7 @@ class FaceMerger():
 
 
 
-
+from socket import *
 
 
 class DeepFaceLiveApp():
@@ -602,22 +602,40 @@ class DeepFaceLiveApp():
          self.frameAjuster = FrameAdjuster()
          self.faceMerger = FaceMerger()
 
-    def run(self):
+    def run(self,addr_input_stream = ('49.12.34.239', 8081), addr_output_stream = ('49.12.34.239', 8082)):
+
+        s_input_stream = socket(AF_INET, SOCK_STREAM)  
+        s_input_stream.connect(addr_input_stream)
+        s_output_stream = socket(AF_INET, SOCK_STREAM) 
+        s_output_stream.connect(addr_output_stream)
+
 
         while True:
-            img = self.camera.on_tick()
-            swap_info_list = self.faceDetector.on_tick(img)
-            self.faceMarker.on_tick(img, swap_info_list)
-            face_align_lmrks_mask_img , face_align_img = self.faceAligner.on_tick(img, swap_info_list)
+
+            data = None
+            data = s_input_stream.recv(921600)
+            receive_data = np.frombuffer(data, dtype='uint8')
+            frame = cv2.imdecode(receive_data, cv2.IMREAD_COLOR)
+
+
+            #img = self.camera.on_tick()
+            swap_info_list = self.faceDetector.on_tick(frame)
+            self.faceMarker.on_tick(frame, swap_info_list)
+            face_align_lmrks_mask_img , face_align_img = self.faceAligner.on_tick(frame, swap_info_list)
             (face_align_mask_img, face_swap_img, face_swap_mask_img) = self.faceSwapper.on_tick(face_align_img, swap_info_list)
-            frameAjuster_img = self.frameAjuster.on_tick(img)
+            frameAjuster_img = self.frameAjuster.on_tick(frame)
 
             res_img = self.faceMerger.on_tick(frameAjuster_img, swap_info_list, face_align_img, face_align_lmrks_mask_img, face_align_mask_img, face_swap_img, face_swap_mask_img)
 
-            if face_swap_img is not None:           
-                cv2.imshow('client', res_img)
-                if cv2.waitKey(1) & 0xFF == ord('q'):
-                    break
+            if res_img is not None: 
+                _, send_data = cv2.imencode('.jpg', res_img, [cv2.IMWRITE_JPEG_QUALITY, 50])
+                s_output_stream.send(send_data)
+
+
+            # if face_swap_img is not None:           
+            #     cv2.imshow('client', res_img)
+            #     if cv2.waitKey(1) & 0xFF == ord('q'):
+            #         break
 
 
     
