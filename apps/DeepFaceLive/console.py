@@ -686,16 +686,9 @@ class DeepFaceLiveApp():
          self.faceMerger = FaceMerger()
          self.stream = Stream()
 
-    def run(self,addr_input_stream = ('49.12.34.239', 8081), addr_output_stream = ('49.12.34.239', 8082)):
-
+    def run(self):
 
         print("run")
-
-        s_input_stream = socket(AF_INET, SOCK_STREAM)  
-        s_input_stream.connect(addr_input_stream)
-        s_output_stream = socket(AF_INET, SOCK_STREAM) 
-        s_output_stream.connect(addr_output_stream)
-
 
         while True:
 
