@@ -628,7 +628,7 @@ import pickle
 
 class Stream():
     def __init__(self) -> None:
-        addr_input_stream = ('49.12.34.239', 8081) 
+        addr_input_stream = ('192.168.88.231', 8081) 
         self.s_input_stream = socket(AF_INET, SOCK_STREAM)
         self.s_input_stream.connect(addr_input_stream)
 
@@ -636,7 +636,7 @@ class Stream():
 
     def recive_frame(self):
 
-        def reciver(socket, buf_len = 20151):
+        def reciver(socket, buf_len = 20000):
             receive_data = b""
 
             while True:
@@ -650,7 +650,7 @@ class Stream():
 
 
         receive_data = reciver(self.s_input_stream)
-        receive_data=pickle.loads(receive_data)
+        #receive_data=pickle.loads(receive_data)
         frame = np.frombuffer(receive_data, dtype='uint8')
         frame = cv2.imdecode(frame, cv2.IMREAD_COLOR)
 
@@ -662,7 +662,7 @@ class Stream():
     def transmiter_frame(self, frame):
         _, send_data = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 50])
         send_data = np.pad(send_data, (0, 20000-len(send_data)), 'constant')
-        send_data = pickle.dumps(send_data)
+        #send_data = pickle.dumps(send_data)
         print(f'sending data, size: {len(send_data)} byte')
         self.s_input_stream.sendall(send_data) 
         
@@ -693,17 +693,18 @@ class DeepFaceLiveApp():
         while True:
  
             frame = self.stream.recive_frame()
-            img = self.inputStream.on_tick(frame)
-            swap_info_list = self.faceDetector.on_tick(img)
-            self.faceMarker.on_tick(img, swap_info_list)
-            face_align_lmrks_mask_img , face_align_img = self.faceAligner.on_tick(img, swap_info_list)
-            (face_align_mask_img, face_swap_img, face_swap_mask_img) = self.faceSwapper.on_tick(face_align_img, swap_info_list)
-            frameAjuster_img = self.frameAjuster.on_tick(img)
 
-            res_img = self.faceMerger.on_tick(frameAjuster_img, swap_info_list, face_align_img, face_align_lmrks_mask_img, face_align_mask_img, face_swap_img, face_swap_mask_img)
-
-            if res_img is not None: 
-                self.stream.transmiter_frame(res_img)
+            while True:    
+                img = self.inputStream.on_tick(frame)
+                swap_info_list = self.faceDetector.on_tick(img)
+                self.faceMarker.on_tick(img, swap_info_list)
+                face_align_lmrks_mask_img , face_align_img = self.faceAligner.on_tick(img, swap_info_list)
+                (face_align_mask_img, face_swap_img, face_swap_mask_img) = self.faceSwapper.on_tick(face_align_img, swap_info_list)
+                frameAjuster_img = self.frameAjuster.on_tick(img)
+                res_img = self.faceMerger.on_tick(frameAjuster_img, swap_info_list, face_align_img, face_align_lmrks_mask_img, face_align_mask_img, face_swap_img, face_swap_mask_img)
+                if res_img is not None: 
+                    self.stream.transmiter_frame(res_img)
+                    break
 
 
 
