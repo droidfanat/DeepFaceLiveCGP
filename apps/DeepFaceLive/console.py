@@ -628,7 +628,7 @@ import pickle
 
 class Stream():
     def __init__(self) -> None:
-        addr_input_stream = ('192.168.88.231', 8081) 
+        addr_input_stream = ('49.12.34.239', 8081) 
         self.s_input_stream = socket(AF_INET, SOCK_STREAM)
         self.s_input_stream.connect(addr_input_stream)
 
