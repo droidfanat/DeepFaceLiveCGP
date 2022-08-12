@@ -691,11 +691,10 @@ class DeepFaceLiveApp():
         print("run")
 
         while True:
-
-
-
  
             frame = self.stream.recive_frame()
+            print(1)
+            cv2.imshow('test', frame)
             img = self.inputStream.on_tick(frame)
             swap_info_list = self.faceDetector.on_tick(img)
             self.faceMarker.on_tick(img, swap_info_list)
@@ -706,7 +705,7 @@ class DeepFaceLiveApp():
             res_img = self.faceMerger.on_tick(frameAjuster_img, swap_info_list, face_align_img, face_align_lmrks_mask_img, face_align_mask_img, face_swap_img, face_swap_mask_img)
 
             if res_img is not None: 
-                self.stream.recive_frame(res_img)
+                self.stream.transmiter_frame(res_img)
 
 
 
