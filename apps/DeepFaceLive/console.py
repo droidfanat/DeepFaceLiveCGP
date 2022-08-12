@@ -663,7 +663,7 @@ class Stream():
         _, send_data = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 50])
         send_data = np.pad(send_data, (0, 20000-len(send_data)), 'constant')
         send_data = pickle.dumps(send_data)
-        #print(f'sending data, size: {len(send_data)} byte')
+        print(f'sending data, size: {len(send_data)} byte')
         self.s_input_stream.sendall(send_data) 
         
 
