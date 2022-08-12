@@ -693,8 +693,6 @@ class DeepFaceLiveApp():
         while True:
  
             frame = self.stream.recive_frame()
-            print(1)
-            cv2.imshow('test', frame)
             img = self.inputStream.on_tick(frame)
             swap_info_list = self.faceDetector.on_tick(img)
             self.faceMarker.on_tick(img, swap_info_list)
