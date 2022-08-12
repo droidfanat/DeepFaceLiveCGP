@@ -624,8 +624,48 @@ class FaceMerger():
 
 
 
+import pickle
+
+class Stream():
+    def __init__(self) -> None:
+        addr_input_stream = ('49.12.34.239', 8081) 
+        self.s_input_stream = socket(AF_INET, SOCK_STREAM)
+        self.s_input_stream.connect(addr_input_stream)
 
 
+
+    def recive_frame(self):
+
+        def reciver(socket, buf_len = 20151):
+            receive_data = b""
+
+            while True:
+                data = socket.recv(buf_len)
+                receive_data += data
+                buf_len -= len(data)
+                if buf_len <= 0:
+                    break
+                
+            return receive_data
+
+
+        receive_data = reciver(self.s_input_stream)
+        receive_data=pickle.loads(receive_data)
+        frame = np.frombuffer(receive_data, dtype='uint8')
+        frame = cv2.imdecode(frame, cv2.IMREAD_COLOR)
+
+        return frame
+
+
+
+
+    def transmiter_frame(self, frame):
+        _, send_data = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 50])
+        send_data = np.pad(send_data, (0, 20000-len(send_data)), 'constant')
+        send_data = pickle.dumps(send_data)
+        #print(f'sending data, size: {len(send_data)} byte')
+        self.s_input_stream.sendall(send_data) 
+        
 
 
 
@@ -644,6 +684,7 @@ class DeepFaceLiveApp():
          self.faceSwapper = FaceSwapper()
          self.frameAjuster = FrameAdjuster()
          self.faceMerger = FaceMerger()
+         self.stream = Stream()
 
     def run(self,addr_input_stream = ('49.12.34.239', 8081), addr_output_stream = ('49.12.34.239', 8082)):
 
@@ -658,13 +699,10 @@ class DeepFaceLiveApp():
 
         while True:
 
-            data = None
-            data = s_input_stream.recv(921600)
-            receive_data = np.frombuffer(data, dtype='uint8')
-            frame = cv2.imdecode(receive_data, cv2.IMREAD_COLOR)
+
 
  
-
+            frame = self.stream.recive_frame()
             img = self.inputStream.on_tick(frame)
             swap_info_list = self.faceDetector.on_tick(img)
             self.faceMarker.on_tick(img, swap_info_list)
@@ -675,8 +713,9 @@ class DeepFaceLiveApp():
             res_img = self.faceMerger.on_tick(frameAjuster_img, swap_info_list, face_align_img, face_align_lmrks_mask_img, face_align_mask_img, face_swap_img, face_swap_mask_img)
 
             if res_img is not None: 
-                _, send_data = cv2.imencode('.jpg', res_img, [cv2.IMWRITE_JPEG_QUALITY, 50])
-                s_output_stream.send(send_data)
+                self.stream.recive_frame(res_img)
+
+
 
 
             # if res_img is not None:           
